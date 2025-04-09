@@ -1,4 +1,3 @@
-// index.js
 const { Server } = require("socket.io");
 const http = require("http");
 
@@ -6,19 +5,26 @@ const PORT = 8080;
 const server = http.createServer();
 const io = new Server(server, {
   cors: {
-    origin: "*", // ⚠️ 記得換成你的 Next.js 網站 URL（正式部署）
+    origin: "*",
   },
 });
 
 io.on("connection", (socket) => {
-  console.log("📡 有用戶連上了");
+  console.log("📡 有用戶連接");
 
-  // 監聽播放請求
-  socket.on("play-request", (payload) => {
-    console.log("▶️ 收到播放請求：", payload);
+  socket.on("get-server-time", (callback) => {
+    const serverTime = Date.now();
+    callback(serverTime);
+  });
 
-    // 廣播給所有用戶（包含自己）
-    io.emit("play", payload);
+  socket.on("play-request", () => {
+    const serverNow = Date.now();
+    const delay = 3000;
+    const startAt = serverNow + delay;
+
+    console.log("▶️ 廣播播放指令，播放時間（server）:", new Date(startAt).toLocaleString());
+
+    io.emit("play", { startAt });
   });
 
   socket.on("disconnect", () => {
@@ -27,5 +33,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 Socket.IO server 運行中：http://localhost:${PORT}`);
+  console.log(`🚀 Socket.IO server 成功運行於：http://localhost:${PORT}`);
 });
