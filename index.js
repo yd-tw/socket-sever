@@ -17,6 +17,7 @@ io.on("connection", (socket) => {
     callback(serverTime);
   });
 
+  // tone
   socket.on("play-request", () => {
     const serverNow = Date.now();
     const delay = 3000;
@@ -25,6 +26,14 @@ io.on("connection", (socket) => {
     console.log("▶️ 廣播播放指令，播放時間（server）:", new Date(startAt).toLocaleString());
 
     io.emit("play", { startAt });
+  });
+
+  // taw-web
+  socket.on("blockOccupied", (data) => {
+    console.log("收到佔領事件：", data);
+
+    // 廣播給所有連線的客戶端（包括自己）
+    io.emit("blockUpdated", data);
   });
 
   socket.on("disconnect", () => {
