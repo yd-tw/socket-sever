@@ -29,10 +29,9 @@ io.on("connection", (socket) => {
   });
 
   // taw-web
-  socket.on("blockOccupied", (data) => {
+  socket.on("blockUpdate", (data) => {
     console.log("收到佔領事件：", data);
-
-    // 廣播給所有連線的客戶端（包括自己）
+    
     io.emit("blockUpdated", data);
   });
 
@@ -42,5 +41,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 Socket.IO server 成功運行於：http://localhost:${PORT}`);
+  console.log(`🚀 Socket.IO server 成功運行，PORT:${PORT}`);
 });
